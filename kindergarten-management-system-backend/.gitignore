@@ -1,0 +1,26 @@
+# Rails/runtime artifacts
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+!/tmp/pids/
+!/tmp/pids/.keep
+!/tmp/storage/
+!/tmp/storage/.keep
+
+# Local databases
+/db/*.sqlite3
+/db/*.sqlite3-*
+
+# Local bundle/cache
+/vendor/bundle
+/.bundle
+
+# Secrets and local environment
+/config/master.key
+.env
+.env.*
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

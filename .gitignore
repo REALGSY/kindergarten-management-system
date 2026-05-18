@@ -1,0 +1,42 @@
+# Dependencies
+**/node_modules/
+**/.pnp
+**/.pnp.js
+
+# Build and coverage output
+kindergarten-management-system-frontend/build/
+**/coverage/
+
+# Rails runtime artifacts
+kindergarten-management-system-backend/log/*
+!kindergarten-management-system-backend/log/.keep
+kindergarten-management-system-backend/tmp/*
+!kindergarten-management-system-backend/tmp/.keep
+!kindergarten-management-system-backend/tmp/pids/
+!kindergarten-management-system-backend/tmp/pids/.keep
+kindergarten-management-system-backend/storage/*
+!kindergarten-management-system-backend/storage/.keep
+
+# Local databases
+kindergarten-management-system-backend/db/*.sqlite3
+kindergarten-management-system-backend/db/*.sqlite3-*
+
+# Local bundle/cache
+kindergarten-management-system-backend/vendor/bundle/
+kindergarten-management-system-backend/.bundle/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+kindergarten-management-system-backend/config/master.key
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
