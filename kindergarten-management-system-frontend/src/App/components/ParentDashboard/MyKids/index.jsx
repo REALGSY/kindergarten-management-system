@@ -13,6 +13,8 @@ export default function MyKids() {
   const [students, setStudents] = useState([]);
   const [applications, setApplications] = useState([]);
   const [message, setMessage] = useState("");
+  const [passwordInputs, setPasswordInputs] = useState({});
+  const [savingPasswordId, setSavingPasswordId] = useState(null);
   const token = localStorage.getItem("jwt");
   const parentId = localStorage.getItem("parent");
   const config = useMemo(() => ({
@@ -49,10 +51,30 @@ export default function MyKids() {
     }
   }
 
+  async function updateChildPassword(studentId) {
+    const password = (passwordInputs[studentId] || "").trim();
+    if (!password) {
+      setMessage("请输入新的儿童端密码。");
+      return;
+    }
+
+    setSavingPasswordId(studentId);
+    setMessage("");
+    try {
+      await axios.patch(`/parent/children/${studentId}/password`, { password }, config);
+      setPasswordInputs((current) => ({ ...current, [studentId]: "" }));
+      setMessage("儿童端密码已更新。");
+    } catch (error) {
+      setMessage(error.response?.data?.errors || error.response?.data?.error || "儿童端密码更新失败");
+    } finally {
+      setSavingPasswordId(null);
+    }
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-semibold text-gray-900">我的孩子</h1>
-      <p className="mt-2 text-sm text-gray-500">提交学号后需要管理员审批，通过后才能查看孩子详情。</p>
+      <p className="mt-2 text-sm text-gray-500">提交学号后需要管理员审批，通过后才能查看孩子详情。儿童端默认密码为 123456。</p>
       <form className="mt-4 flex flex-wrap gap-2 rounded-md bg-white p-4 shadow-sm" onSubmit={addKid}>
         <input className="rounded border p-2" value={admissionNumber} onChange={(event) => setAdmissionNumber(event.target.value)} type="number" placeholder="请输入孩子学号" required />
         <button className="rounded bg-[#B124A3] px-4 py-2 text-white" type="submit">提交绑定申请</button>
@@ -79,16 +101,34 @@ export default function MyKids() {
       <h2 className="mt-8 text-lg font-semibold text-gray-900">已通过的孩子</h2>
       <div className="mt-3 overflow-x-auto rounded-md bg-white shadow-sm">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-50 text-left"><tr><th className="p-3">学号</th><th className="p-3">姓名</th><th className="p-3">操作</th></tr></thead>
+          <thead className="bg-gray-50 text-left"><tr><th className="p-3">学号</th><th className="p-3">姓名</th><th className="p-3">儿童端密码</th><th className="p-3">操作</th></tr></thead>
           <tbody>
             {students.map((student) => (
               <tr key={student.id} className="border-t">
                 <td className="p-3">{student.admission_number}</td>
                 <td className="p-3">{student.first_name} {student.second_name} {student.surname}</td>
+                <td className="p-3">
+                  <div className="flex min-w-[240px] flex-wrap gap-2">
+                    <input
+                      className="min-w-0 flex-1 rounded border p-2"
+                      type="password"
+                      placeholder="输入新密码"
+                      value={passwordInputs[student.id] || ""}
+                      onChange={(event) => setPasswordInputs((current) => ({ ...current, [student.id]: event.target.value }))}
+                    />
+                    <button
+                      className="rounded border px-3 py-1 text-pink-700 disabled:opacity-50"
+                      type="button"
+                      onClick={() => updateChildPassword(student.id)}
+                      disabled={savingPasswordId === student.id}>
+                      {savingPasswordId === student.id ? "保存中" : "设置"}
+                    </button>
+                  </div>
+                </td>
                 <td className="p-3"><Link className="rounded border px-3 py-1 text-pink-700" to={`${student.id}`}>查看</Link></td>
               </tr>
             ))}
-            {students.length === 0 ? <tr><td className="p-6 text-center text-gray-500" colSpan="3">暂无已通过的孩子</td></tr> : null}
+            {students.length === 0 ? <tr><td className="p-6 text-center text-gray-500" colSpan="4">暂无已通过的孩子</td></tr> : null}
           </tbody>
         </table>
       </div>

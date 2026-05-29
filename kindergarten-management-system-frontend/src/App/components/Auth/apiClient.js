@@ -1,5 +1,3 @@
-const API_PORT = "3000";
-
 function normalizePath(path) {
   return path.startsWith("/") ? path : `/${path}`;
 }
@@ -14,15 +12,6 @@ export function apiUrl(path) {
 
   if (configuredBaseUrl) {
     return `${trimTrailingSlash(configuredBaseUrl)}${normalizedPath}`;
-  }
-
-  if (process.env.NODE_ENV === "production" && typeof window !== "undefined") {
-    const { hostname, port } = window.location;
-
-    if (hostname && port !== API_PORT) {
-      const protocol = window.location.protocol === "https:" ? "https:" : "http:";
-      return `${protocol}//${hostname}:${API_PORT}${normalizedPath}`;
-    }
   }
 
   return normalizedPath;

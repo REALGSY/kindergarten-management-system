@@ -1,0 +1,16 @@
+{
+  "short_name": "ParaKindergarten",
+  "name": "ParaKindergarten",
+  "description": "A Digital Parallel Preschool Management System",
+  "icons": [
+    {
+      "src": "assets/brand/para-kindergarten-logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#B124A3",
+  "background_color": "#ffffff"
+}

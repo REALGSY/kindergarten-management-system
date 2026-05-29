@@ -59,9 +59,20 @@ class ApplicationController < ActionController::API
       end
       @current_admin
     end
+
+    def current_child_student
+      return @current_child_student if defined?(@current_child_student)
+
+      @current_child_student = nil
+      if decoded_token
+        student_id = decoded_token[0]['child_student_id']
+        @current_child_student = Student.find_by(id: student_id)
+      end
+      @current_child_student
+    end
   
     def logged_in?
-      !!current_user || !!current_parent || !!current_admin
+      !!current_user || !!current_parent || !!current_admin || !!current_child_student
     end
   
     def authorize
@@ -78,6 +89,10 @@ class ApplicationController < ActionController::API
 
     def require_parent
       render json: { error: 'Parent access required' }, status: :forbidden unless current_parent
+    end
+
+    def require_child
+      render json: { error: 'Child access required' }, status: :forbidden unless current_child_student
     end
 
     def teacher_students

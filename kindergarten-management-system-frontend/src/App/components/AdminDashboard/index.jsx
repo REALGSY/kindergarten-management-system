@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { SYSTEM_NAME } from "../../brand";
 
 const navigation = [
   { label: "概览", to: "/admin_dashboard" },
@@ -10,6 +11,8 @@ const navigation = [
   { label: "绑定审批", to: "/admin_dashboard/parent_students" },
   { label: "考勤", to: "/admin_dashboard/attendances" },
   { label: "纪律", to: "/admin_dashboard/disciplines" },
+  { label: "早教视频", to: "/admin_dashboard/educational_videos" },
+  { label: "儿童聊天", to: "/admin_dashboard/child_chat_sessions" },
 ];
 
 function AdminDashboard() {
@@ -40,7 +43,7 @@ function AdminDashboard() {
     <div className="flex min-h-screen bg-slate-100">
       <aside className="hidden w-64 shrink-0 border-r bg-white p-5 md:block">
         <div className="mb-8">
-          <p className="text-sm text-pink-600">KinderJoy</p>
+          <p className="text-sm text-pink-600">{SYSTEM_NAME}</p>
           <h1 className="text-xl font-semibold text-gray-900">管理员端</h1>
         </div>
         <nav className="space-y-1">

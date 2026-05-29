@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiUrl, readJsonResponse } from "../Auth/apiClient";
+import { SYSTEM_NAME } from "../../brand";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function AdminLogin() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md rounded-md bg-white p-8 shadow">
         <div className="mb-6">
-          <p className="text-sm font-medium text-pink-600">KinderJoy</p>
+          <p className="text-sm font-medium text-pink-600">{SYSTEM_NAME}</p>
           <h1 className="mt-2 text-2xl font-semibold text-gray-900">管理员登录</h1>
           <p className="mt-2 text-sm text-gray-500">使用管理员账号进入全局管理台。</p>
         </div>

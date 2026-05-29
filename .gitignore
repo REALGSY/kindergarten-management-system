@@ -14,6 +14,8 @@ kindergarten-management-system-backend/tmp/*
 !kindergarten-management-system-backend/tmp/.keep
 !kindergarten-management-system-backend/tmp/pids/
 !kindergarten-management-system-backend/tmp/pids/.keep
+kindergarten-management-system-backend/tmp/pids/*.pid
+kindergarten-management-system-backend/tmp/storage/**
 kindergarten-management-system-backend/storage/*
 !kindergarten-management-system-backend/storage/.keep
 
@@ -40,3 +42,7 @@ yarn-error.log*
 # OS/editor noise
 .DS_Store
 Thumbs.db
+.playwright-mcp/
+
+# Local credential/reference exports
+kindergarten-demo-accounts.md

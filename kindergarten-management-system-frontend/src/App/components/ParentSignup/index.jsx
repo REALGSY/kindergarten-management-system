@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import "./ParentSignup.css";
 import Nav from "../Home/Nav";
+import { SYSTEM_NAME } from "../../brand";
 
 function ParentSignup() {
   const [modal,setModal] = useState(false)
@@ -54,7 +55,7 @@ function handleClose(){
               src="https://i.ibb.co/rkY319L/Screenshot-2023-01-01-at-01-08-52.png"
               alt="注册插图"></img>
           </div>
-          <h2 className="text">KinderJoy 家长</h2>
+          <h2 className="text">{SYSTEM_NAME} 家长</h2>
           <h2 className="text2">
             已有账号？{" "}
             <Link to="/parent_login" style={{ color: "#B124A3" }}>

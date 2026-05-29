@@ -2,6 +2,7 @@ class Parent < ApplicationRecord
     has_secure_password
     has_many :parent_students, dependent: :destroy
     has_many :students, through: :parent_students
+    has_many :child_chat_sessions, dependent: :nullify
     validates :first_name, presence: true
     validates :last_name, presence: true
     validates :password, presence: true, length: {minimum: 5}, on: :create

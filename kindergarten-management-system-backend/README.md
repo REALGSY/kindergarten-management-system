@@ -1,6 +1,6 @@
-# Kindergarten Management System Backend
+# ParaKindergarten Backend
 
-Rails API backend for the Kindergarten Management System.
+Rails API backend for ParaKindergarten.
 
 ## Core Capabilities
 
@@ -32,6 +32,10 @@ ALLOWED_ORIGINS=http://localhost:4000
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=admin123
 DEFAULT_ACCOUNT_PASSWORD=123456
+DEEPSEEK_API_KEY=replace-with-deepseek-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-v4-flash
+DEEPSEEK_MAX_TOKENS=500
 ```
 
 `JWT_SECRET` is required in production. If `config/master.key` or any JWT secret has ever been committed or shared, rotate it before deploying.

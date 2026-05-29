@@ -1,130 +1,134 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ParentLogin.css";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import Nav from "../Home/Nav";
 import kid from "./kids.svg";
-import logo from "./logo.svg";
+import { apiUrl, readJsonResponse } from "../Auth/apiClient";
+import { paraKindergartenLogo, SYSTEM_LOGO_ALT, SYSTEM_NAME } from "../../brand";
 
 function ParentLogin() {
   const navigate = useNavigate();
-  const [done, setDone] = useState(false);
-  // Make sure to install useForm using npm to avoid errors
-  const {
-    register,
-    handleSubmit,
-  } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [modal, setModal] = useState(false);
+  const { register, handleSubmit } = useForm();
 
   function handleNotification() {
     setModal(true);
-    handleClose();
-  }
-
-  function handleClose() {
     setTimeout(() => {
       setModal(false);
       navigate("/parent_dashboard");
     }, 2000);
   }
 
-  function onSubmit(data) {
-    setDone(true)
-    fetch("/parent_login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((res) => {
-          localStorage.setItem("jwt", res.jwt);
-          localStorage.setItem("parent", `${res.parent.id}`);
-          localStorage.setItem("parent_data", JSON.stringify(res.parent))
-          setDone(false)
-          return handleNotification();
-        });
-      } else {
-        res.json().then((error) => alert(error.errors));
+  async function onSubmit(data) {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(apiUrl("/parent_login"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await readJsonResponse(response, "家长登录失败");
+
+      if (!response.ok) {
+        throw new Error(result.errors || result.error || "电话号码或密码不正确");
       }
-    });
+
+      localStorage.setItem("jwt", result.jwt);
+      localStorage.setItem("parent", `${result.parent.id}`);
+      localStorage.setItem("parent_data", JSON.stringify(result.parent));
+      handleNotification();
+    } catch (err) {
+      setError(err.message || "家长登录失败，请稍后重试");
+    } finally {
+      setLoading(false);
+    }
   }
+
   return (
-    <div className="main w-screen h-screen bg-[#B124A3]">
+    <div className="main min-h-screen bg-[#B124A3]">
       <Nav />
-      <hr className="border border-1"></hr>{" "}
+      <hr className="border border-1" />
       {modal ? (
-        <div className=" bg-pink-200 text-center h-auto  m-auto ">
+        <div className="bg-pink-200 py-2 text-center">
           登录成功
         </div>
       ) : null}
-      <div className=" flex items-center justify-center ">
-        {/* phone_number: "743564786",
-        password: "765476", */}
 
-        <div className="main-container bg-white">
-          <div className="card-one sm:block hidden">
-            <div className="sub-card ">
-              <img src={kid} alt="家长和孩子"></img>
+      <main className="flex items-center justify-center px-4 py-10">
+        <section className="flex w-full max-w-[980px] overflow-hidden rounded-[30px] bg-white">
+          <div className="hidden h-[582px] w-[600px] shrink-0 bg-[#FFE6EE] sm:block">
+            <div className="parent-login-illustration relative left-[120px] top-[73px] h-[314px] w-[357px]">
+              <img src={kid} alt="家长和孩子" />
             </div>
-            <h2 className="text text-pink-500">KinderJoy 家长</h2>
-            <h2 className="text2">
+            <h2 className="mx-auto mt-24 w-[362px] text-[40px] font-bold leading-[50px] text-pink-500">
+              {SYSTEM_NAME} 家长
+            </h2>
+            <p className="mt-1 text-center text-xl leading-5 text-[#9FA2B4]">
               还没有账号？{" "}
               <Link to="/parent_signup" style={{ color: "#B124A3" }}>
                 点击注册
               </Link>
-            </h2>
+            </p>
           </div>
-          <div className="bg-white  rounded-r-3xl">
-            <div className="flex items-center justify-center mt-12 mb-4">
-              <img src={logo} alt="标志" />
+
+          <div className="w-full bg-white sm:w-[380px]">
+            <div className="mb-4 mt-12 flex items-center justify-center">
+              <img className="h-16 w-auto" src={paraKindergartenLogo} alt={SYSTEM_LOGO_ALT} />
             </div>
             <div className="flex justify-center">
               <p className="text-2xl font-semibold">家长登录</p>
             </div>
-            <div className="flex justify-center mt-2 mb-7">
+            <div className="mb-7 mt-2 flex justify-center">
               <p className="text-[#9FA2B4]">请在下方输入登录信息</p>
             </div>
 
             <form
-              className="grid grid-cols-1 gap-3 m-10"
+              className="m-10 grid grid-cols-1 gap-3"
               onSubmit={handleSubmit(onSubmit)}>
-              <label className="">电话号码</label>
+              {error ? <div className="rounded bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}
+              <label htmlFor="phone_number">电话号码</label>
               <input
                 id="phone_number"
-                className="border rounded-md p-3"
+                className="rounded-md border p-3"
                 type="number"
-                name="phone_number"
                 placeholder="电话号码"
                 {...register("phone_number", {
                   required: true,
                 })}
               />
-              <label className="">密码</label>
+              <label htmlFor="password">密码</label>
               <input
                 id="password"
-                className="border rounded-md p-3"
+                className="rounded-md border p-3"
                 type="password"
-                name="password"
                 placeholder="请输入密码..."
                 {...register("password", {
                   required: true,
                 })}
               />
               <button
-                className="px-3 p-2 flex bg-[#B124A3] justify-center text-white rounded-md"
-                type="submit">
-                   {done ?<svg
-                  class="animate-spin h-5 w-5 outline outline-3 mr-1 rounded-full"
-                  viewBox="0 0 24 24"></svg>:null}
-             <span>登录</span>
+                className="flex w-full cursor-pointer justify-center rounded-md bg-[#B124A3] px-3 py-2 text-white disabled:opacity-60"
+                type="submit"
+                disabled={loading}>
+                {loading ? (
+                  <svg
+                    className="mr-1 h-5 w-5 animate-spin rounded-full outline outline-3"
+                    viewBox="0 0 24 24"
+                  />
+                ) : null}
+                <span>{loading ? "登录中..." : "登录"}</span>
               </button>
             </form>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

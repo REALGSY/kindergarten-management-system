@@ -1,6 +1,6 @@
-# Kindergarten Management System
+# ParaKindergarten
 ### Overview
-This project is a fullstack application for managing a kindergarten. It includes separate admin, teacher, and parent dashboards. Admins manage global school data, teachers operate only within their assigned classroom, and parents can view approved linked children.
+ParaKindergarten is a fullstack application for managing a preschool. It includes separate admin, teacher, and parent dashboards. Admins manage global school data, teachers operate only within their assigned classroom, and parents can view approved linked children.
 
 # Getting Started
 ## Tecnologies used

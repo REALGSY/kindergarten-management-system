@@ -5,8 +5,10 @@
 !/tmp/.keep
 !/tmp/pids/
 !/tmp/pids/.keep
+/tmp/pids/*.pid
 !/tmp/storage/
 !/tmp/storage/.keep
+/tmp/storage/**
 
 # Local databases
 /db/*.sqlite3

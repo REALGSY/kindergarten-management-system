@@ -1,5 +1,6 @@
 class Admin < ApplicationRecord
   has_secure_password
+  has_many :educational_videos, dependent: :nullify
 
   validates :first_name, :last_name, :email, presence: true
   validates :email, uniqueness: true

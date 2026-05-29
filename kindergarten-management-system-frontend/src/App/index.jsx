@@ -13,6 +13,8 @@ import AdminParents from "./components/AdminDashboard/Parents";
 import AdminParentStudents from "./components/AdminDashboard/ParentStudents";
 import AdminAttendances from "./components/AdminDashboard/Attendances";
 import AdminDisciplines from "./components/AdminDashboard/Disciplines";
+import AdminEducationalVideos from "./components/AdminDashboard/EducationalVideos";
+import AdminChildChatSessions from "./components/AdminDashboard/ChildChatSessions";
 import Dashboard from "./components/Dashboard";
 import KidsList from "./components/Dashboard/KidsList";
 import Attendance from "./components/Dashboard/Attendance";
@@ -27,6 +29,9 @@ import SingleKid from "./components/ParentDashboard/MyKids/SingleKid";
 import ParentLogin from "./components/ParentLogin";
 import ParentSignup from "./components/ParentSignup";
 import Welcome from "./components/ParentDashboard/Welcome";
+import ParentChatRecords from "./components/ParentDashboard/ChatRecords";
+import ChildLogin from "./components/ChildLogin";
+import ChildDashboard from "./components/ChildDashboard";
 import SingleAttendance from "./components/Dashboard/Attendance/SingleAttendance";
 import { TeacherContextProvider } from "./components/Context/teacher-context";
 import TeacherWelcome from "./components/Dashboard/Welcome";
@@ -47,6 +52,8 @@ function App() {
           <Route path="/admin_login" element={<AdminLogin />} />
           <Route path="/parent_login" element={<ParentLogin />} />
           <Route path="/parent_signup" element={<ParentSignup />} />
+          <Route path="/child_login" element={<ChildLogin />} />
+          <Route path="/child_dashboard" element={<ChildDashboard />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="admin_dashboard" element={<AdminDashboard />}>
             <Route index element={<AdminOverview />} />
@@ -57,6 +64,8 @@ function App() {
             <Route path="parent_students" element={<AdminParentStudents />} />
             <Route path="attendances" element={<AdminAttendances />} />
             <Route path="disciplines" element={<AdminDisciplines />} />
+            <Route path="educational_videos" element={<AdminEducationalVideos />} />
+            <Route path="child_chat_sessions" element={<AdminChildChatSessions />} />
           </Route>
           <Route path="dashboard" element={<Dashboard />}>
             <Route path="addcase" element={<AddCase />} />
@@ -80,6 +89,7 @@ function App() {
           <Route path="parent_dashboard" element={<ParentDashboard />}>
             <Route path="" element={<Welcome />} />
             <Route path="profile" element={<ProfileP />} />
+            <Route path="chat_records" element={<ParentChatRecords />} />
             <Route path="my_kids">
               <Route index element={<MyKids />} />
               <Route path=":id" element={<SingleKid />} />

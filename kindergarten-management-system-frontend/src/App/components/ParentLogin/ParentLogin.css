@@ -100,3 +100,8 @@ top: 2rem;
 .main{
   background-color: #B124A3;
 }
+
+.parent-login-illustration img {
+  height: 100%;
+  width: 100%;
+}

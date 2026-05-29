@@ -13,11 +13,16 @@ const roleConfig = {
     tokenKeys: ["jwt", "parent", "parent_data"],
     loginPath: "/parent_login",
   },
+  child: {
+    tokenKeys: ["childToken", "child", "child_data"],
+    loginPath: "/child_login",
+  },
 };
 
 function roleFromPath() {
   const path = window.location.pathname;
   if (path.startsWith("/admin")) return "admin";
+  if (path.startsWith("/child")) return "child";
   if (path.startsWith("/parent")) return "parent";
   return "teacher";
 }

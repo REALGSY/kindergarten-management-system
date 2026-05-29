@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "./logo.svg";
+import { paraKindergartenLogo, SYSTEM_LOGO_ALT } from "../../../brand";
 
 const links = [
   { to: "/dashboard", label: "控制台" },
@@ -24,7 +24,7 @@ function Sidebar() {
 
   return (
     <aside className="hidden min-h-screen w-60 shrink-0 border-r bg-white p-5 md:block">
-      <img className="mx-auto mb-6 h-14" src={logo} alt="KinderJoy" />
+      <img className="mx-auto mb-6 h-14" src={paraKindergartenLogo} alt={SYSTEM_LOGO_ALT} />
       <nav className="space-y-1">
         {links.map((link) => (
           <Link key={link.to} className="block rounded px-3 py-2 text-gray-700 hover:bg-pink-50 hover:text-[#B124A3]" to={link.to}>

@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import ParentContext from "../ParentContext";
-import Logo from "../Home/assets/pre-logo.png";
+import { paraKindergartenLogo, SYSTEM_LOGO_ALT } from "../../brand";
 
 const navigation = [
   { name: "控制台", href: "/parent_dashboard" },
   { name: "我的孩子", href: "/parent_dashboard/my_kids" },
+  { name: "聊天记录", href: "/parent_dashboard/chat_records" },
   { name: "个人资料", href: "/parent_dashboard/profile" },
 ];
 
@@ -31,7 +32,9 @@ export default function ParentDashboard() {
   }, [token, parentId, config]);
 
   function handleLogout() {
-    localStorage.clear();
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("parent");
+    localStorage.removeItem("parent_data");
     navigate("/parent_login");
   }
 
@@ -50,7 +53,7 @@ export default function ParentDashboard() {
     <ParentContext.Provider value={{ parent }}>
       <div className="flex min-h-screen bg-slate-100">
         <aside className="hidden w-64 shrink-0 border-r bg-white p-5 md:block">
-          <img className="mb-6 h-16 w-auto" src={Logo} alt="KinderJoy" />
+          <img className="mb-6 h-16 w-auto" src={paraKindergartenLogo} alt={SYSTEM_LOGO_ALT} />
           <nav className="space-y-1">
             {navigation.map((item) => (
               <Link key={item.href} className="block rounded px-3 py-2 text-gray-700 hover:bg-pink-50 hover:text-[#B124A3]" to={item.href}>
