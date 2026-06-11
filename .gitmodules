@@ -1,0 +1,4 @@
+[submodule "child_dev2"]
+	path = child_dev2
+	url = https://github.com/wan300/Digital_child.git
+	branch = main
