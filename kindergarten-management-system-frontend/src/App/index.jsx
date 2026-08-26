@@ -15,6 +15,8 @@ import AdminAttendances from "./components/AdminDashboard/Attendances";
 import AdminDisciplines from "./components/AdminDashboard/Disciplines";
 import AdminEducationalVideos from "./components/AdminDashboard/EducationalVideos";
 import AdminChildChatSessions from "./components/AdminDashboard/ChildChatSessions";
+import AdminChildGrowth from "./components/AdminDashboard/ChildGrowth";
+import AdminParentingAdvice from "./components/AdminDashboard/ParentingAdvice";
 import Dashboard from "./components/Dashboard";
 import KidsList from "./components/Dashboard/KidsList";
 import Attendance from "./components/Dashboard/Attendance";
@@ -66,6 +68,8 @@ function App() {
             <Route path="disciplines" element={<AdminDisciplines />} />
             <Route path="educational_videos" element={<AdminEducationalVideos />} />
             <Route path="child_chat_sessions" element={<AdminChildChatSessions />} />
+            <Route path="child_growth" element={<AdminChildGrowth />} />
+            <Route path="parenting_advice" element={<AdminParentingAdvice />} />
           </Route>
           <Route path="dashboard" element={<Dashboard />}>
             <Route path="addcase" element={<AddCase />} />

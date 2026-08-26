@@ -19,6 +19,12 @@ Rails.application.routes.draw do
     resources :admins
     resources :teachers
     resources :classrooms
+    resources :classroom_imports, only: [:create] do
+      collection do
+        get :template
+        post :preview
+      end
+    end
     resources :students
     resources :parents
     resources :parent_students, only: [:index, :create, :update, :destroy]
@@ -26,12 +32,21 @@ Rails.application.routes.draw do
     resources :disciplines, only: [:index, :show, :create, :update, :destroy]
     resources :educational_videos
     resources :child_chat_sessions, only: [:index, :show]
+    get '/parenting_advice/recipient_options', to: 'parenting_advice#recipient_options'
+    resources :external_email_recipients
+    resources :parenting_advice_schedules, only: [:index, :show, :create, :destroy] do
+      member do
+        patch :pause
+        patch :resume
+      end
+    end
   end
 
   scope path: :child, module: :child_api, as: :child do
     get '/profile', to: 'students#show'
     get '/students', to: 'students#index'
     get '/videos', to: 'videos#index'
+    post '/tts', to: 'tts#create'
     resources :chat_sessions, only: [:index, :show, :create] do
       resources :messages, only: [:create], controller: :chat_messages
     end

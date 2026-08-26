@@ -5,7 +5,7 @@ function Footer() {
         <div className="md:flex md:-mx-4 md:items-center">
           <div className="md:flex-1 md:px-4 text-center md:text-left">
             <p className="text-white">
-              &copy; <strong>版权所有 2022</strong>
+              &copy; <strong>版权所有 2026</strong>
             </p>
           </div>
           <div className="md:flex-1 md:px-4 text-center md:text-right">

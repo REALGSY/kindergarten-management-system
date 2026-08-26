@@ -8,13 +8,15 @@ class DeepseekClient
   class ApiError < Error; end
 
   def initialize(
-    api_key: ENV["DEEPSEEK_API_KEY"],
-    base_url: ENV.fetch("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
-    model: ENV.fetch("DEEPSEEK_MODEL", "deepseek-v4-flash")
+    api_key: ENV["DEEPSEEK_API_KEY"].presence || ENV["LLM_API_KEY"],
+    base_url: ENV["DEEPSEEK_BASE_URL"].presence || ENV.fetch("LLM_BASE_URL", "https://api.deepseek.com"),
+    model: ENV["DEEPSEEK_MODEL"].presence || ENV.fetch("CHAT_MODEL", "deepseek-v4-flash"),
+    max_tokens: ENV.fetch("DEEPSEEK_MAX_TOKENS", "500").to_i
   )
     @api_key = api_key
     @base_url = base_url
     @model = model
+    @max_tokens = max_tokens
   end
 
   def chat(messages:)
@@ -52,7 +54,7 @@ class DeepseekClient
       model: @model,
       messages: messages,
       stream: false,
-      max_tokens: max_tokens,
+      max_tokens: @max_tokens,
       thinking: { type: "disabled" }
     )
 
@@ -61,7 +63,4 @@ class DeepseekClient
     end
   end
 
-  def max_tokens
-    ENV.fetch("DEEPSEEK_MAX_TOKENS", "500").to_i
-  end
 end

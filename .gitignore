@@ -43,6 +43,22 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 .playwright-mcp/
+.codex-runtime-logs/
+deploy-current-*.tar.gz
 
 # Local credential/reference exports
 kindergarten-demo-accounts.md
+
+# child_dev2 imported source: keep runtime/local metadata out of the parent repo
+child_dev2/.git-backup-*/
+child_dev2/.venv/
+child_dev2/backend/.venv/
+child_dev2/data/
+child_dev2/logs/
+child_dev2/tmp/
+child_dev2/upstream_repos/
+child_dev2/frontend/dist/
+child_dev2/frontend/.vite/
+child_dev2/*.db
+child_dev2/*.sqlite
+child_dev2/*.sqlite3

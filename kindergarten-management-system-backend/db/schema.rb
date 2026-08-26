@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_07_000100) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -87,6 +87,24 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
     t.index ["student_id"], name: "index_child_chat_sessions_on_student_id"
   end
 
+  create_table "child_tts_audios", force: :cascade do |t|
+    t.integer "child_chat_message_id"
+    t.string "audio_cache_key", null: false
+    t.string "provider", default: "tencent_cloud", null: false
+    t.integer "voice_type", null: false
+    t.string "codec", null: false
+    t.integer "sample_rate", null: false
+    t.string "text_digest", null: false
+    t.text "clean_text", null: false
+    t.text "audio_segments", null: false
+    t.integer "audio_bytes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["audio_cache_key"], name: "index_child_tts_audios_on_audio_cache_key", unique: true
+    t.index ["child_chat_message_id"], name: "index_child_tts_audios_on_child_chat_message_id"
+    t.index ["provider", "voice_type", "codec", "sample_rate", "text_digest"], name: "index_child_tts_audios_on_voice_and_text"
+  end
+
   create_table "classrooms", force: :cascade do |t|
     t.string "name"
     t.integer "teacher_id"
@@ -123,6 +141,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
     t.index ["subject"], name: "index_educational_videos_on_subject"
   end
 
+  create_table "external_email_recipients", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_external_email_recipients_on_active"
+    t.index ["email"], name: "index_external_email_recipients_on_email", unique: true
+  end
+
   create_table "parent_students", force: :cascade do |t|
     t.integer "parent_id"
     t.integer "student_id"
@@ -133,6 +161,104 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
     t.index ["student_id"], name: "index_parent_students_on_student_id"
   end
 
+  create_table "parenting_advice_content_items", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "source", null: false
+    t.date "date", null: false
+    t.string "url", null: false
+    t.string "thumbnail"
+    t.string "topic", null: false
+    t.string "age_group", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source", "date"], name: "index_parenting_advice_content_items_on_source_and_date"
+    t.index ["topic", "age_group"], name: "index_parenting_advice_content_items_on_topic_and_age_group"
+    t.index ["url"], name: "index_parenting_advice_content_items_on_url", unique: true
+  end
+
+  create_table "parenting_advice_deliveries", force: :cascade do |t|
+    t.integer "parenting_advice_schedule_id", null: false
+    t.datetime "scheduled_run_at", null: false
+    t.string "status", default: "running", null: false
+    t.integer "sent_count", default: 0, null: false
+    t.integer "failed_count", default: 0, null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "email_subject"
+    t.text "email_text_snapshot"
+    t.text "email_html_snapshot"
+    t.text "ai_analysis"
+    t.text "ai_prompt_snapshot"
+    t.index ["parenting_advice_schedule_id", "scheduled_run_at"], name: "index_pa_deliveries_on_schedule_and_run_at", unique: true
+    t.index ["parenting_advice_schedule_id"], name: "index_pa_deliveries_on_schedule_id"
+  end
+
+  create_table "parenting_advice_delivery_content_items", force: :cascade do |t|
+    t.integer "parenting_advice_delivery_id", null: false
+    t.integer "parenting_advice_content_item_id", null: false
+    t.integer "position", null: false
+    t.string "title", null: false
+    t.string "source", null: false
+    t.date "date", null: false
+    t.string "url", null: false
+    t.string "thumbnail"
+    t.string "topic", null: false
+    t.string "age_group", null: false
+    t.text "summary", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parenting_advice_content_item_id"], name: "index_pa_delivery_items_on_content_item_id"
+    t.index ["parenting_advice_delivery_id", "position"], name: "index_pa_delivery_items_on_delivery_and_position", unique: true
+    t.index ["parenting_advice_delivery_id", "url"], name: "index_pa_delivery_items_on_delivery_and_url", unique: true
+    t.index ["parenting_advice_delivery_id"], name: "index_pa_delivery_items_on_delivery_id"
+  end
+
+  create_table "parenting_advice_delivery_recipients", force: :cascade do |t|
+    t.integer "parenting_advice_delivery_id", null: false
+    t.string "name"
+    t.string "email", null: false
+    t.string "status", null: false
+    t.datetime "sent_at"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parenting_advice_delivery_id", "email"], name: "index_pa_delivery_recipients_on_delivery_and_email"
+    t.index ["parenting_advice_delivery_id"], name: "index_pa_delivery_recipients_on_delivery_id"
+  end
+
+  create_table "parenting_advice_schedule_recipients", force: :cascade do |t|
+    t.integer "parenting_advice_schedule_id", null: false
+    t.string "recipient_type", null: false
+    t.integer "recipient_id"
+    t.string "name", null: false
+    t.string "email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parenting_advice_schedule_id", "email"], name: "index_pa_schedule_recipients_on_schedule_and_email", unique: true
+    t.index ["parenting_advice_schedule_id"], name: "index_pa_schedule_recipients_on_schedule_id"
+  end
+
+  create_table "parenting_advice_schedules", force: :cascade do |t|
+    t.integer "admin_id"
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "recurrence", null: false
+    t.datetime "scheduled_at"
+    t.string "send_time"
+    t.integer "weekday"
+    t.datetime "next_run_at"
+    t.string "status", default: "active", null: false
+    t.string "source_type", default: "custom", null: false
+    t.text "source_config", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_parenting_advice_schedules_on_admin_id"
+    t.index ["status", "next_run_at"], name: "index_pa_schedules_on_status_and_next_run_at"
+  end
+
   create_table "parents", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -140,6 +266,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
+    t.index ["email"], name: "index_parents_on_email"
     t.index ["phone_number"], name: "index_parents_on_phone_number", unique: true
   end
 
@@ -179,10 +307,17 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_27_000100) do
   add_foreign_key "child_chat_messages", "child_chat_sessions"
   add_foreign_key "child_chat_sessions", "parents"
   add_foreign_key "child_chat_sessions", "students"
+  add_foreign_key "child_tts_audios", "child_chat_messages"
   add_foreign_key "classrooms", "teachers", on_delete: :nullify
   add_foreign_key "disciplines", "students"
   add_foreign_key "educational_videos", "admins", on_delete: :nullify
   add_foreign_key "parent_students", "parents"
   add_foreign_key "parent_students", "students"
+  add_foreign_key "parenting_advice_deliveries", "parenting_advice_schedules"
+  add_foreign_key "parenting_advice_delivery_content_items", "parenting_advice_content_items"
+  add_foreign_key "parenting_advice_delivery_content_items", "parenting_advice_deliveries"
+  add_foreign_key "parenting_advice_delivery_recipients", "parenting_advice_deliveries"
+  add_foreign_key "parenting_advice_schedule_recipients", "parenting_advice_schedules"
+  add_foreign_key "parenting_advice_schedules", "admins", on_delete: :nullify
   add_foreign_key "students", "classrooms"
 end

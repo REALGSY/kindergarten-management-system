@@ -27,7 +27,7 @@ module AdminApi
     private
 
     def parent_params
-      params.permit(:first_name, :last_name, :phone_number, :password)
+      params.permit(:first_name, :last_name, :phone_number, :email, :password)
     end
 
     def parent_params_with_default_password

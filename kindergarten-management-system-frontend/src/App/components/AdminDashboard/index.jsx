@@ -13,6 +13,8 @@ const navigation = [
   { label: "纪律", to: "/admin_dashboard/disciplines" },
   { label: "早教视频", to: "/admin_dashboard/educational_videos" },
   { label: "儿童聊天", to: "/admin_dashboard/child_chat_sessions" },
+  { label: "儿童成长OS", to: "/admin_dashboard/child_growth" },
+  { label: "育儿建议推送", to: "/admin_dashboard/parenting_advice" },
 ];
 
 function AdminDashboard() {

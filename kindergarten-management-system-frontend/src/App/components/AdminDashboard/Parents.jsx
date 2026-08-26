@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { adminRequest, fullName } from "./api";
 
-const emptyParent = { first_name: "", last_name: "", phone_number: "", password: "" };
+const emptyParent = { first_name: "", last_name: "", phone_number: "", email: "", password: "" };
 
 function ParentsAdmin() {
   const [parents, setParents] = useState([]);
@@ -23,7 +23,13 @@ function ParentsAdmin() {
 
   function startEdit(parent) {
     setEditingId(parent.id);
-    setForm({ first_name: parent.first_name || "", last_name: parent.last_name || "", phone_number: parent.phone_number || "", password: "" });
+    setForm({
+      first_name: parent.first_name || "",
+      last_name: parent.last_name || "",
+      phone_number: parent.phone_number || "",
+      email: parent.email || "",
+      password: "",
+    });
   }
 
   async function handleSubmit(event) {
@@ -61,6 +67,7 @@ function ParentsAdmin() {
         <input className="rounded border p-2" name="first_name" placeholder="名" value={form.first_name} onChange={handleChange} required />
         <input className="rounded border p-2" name="last_name" placeholder="姓" value={form.last_name} onChange={handleChange} required />
         <input className="rounded border p-2" name="phone_number" placeholder="电话" value={form.phone_number} onChange={handleChange} required />
+        <input className="rounded border p-2" name="email" type="email" placeholder="邮箱（可选）" value={form.email} onChange={handleChange} />
         <input className="rounded border p-2" name="password" type="password" placeholder={editingId ? "留空则不修改密码" : "留空使用默认密码"} value={form.password} onChange={handleChange} />
         <div className="flex gap-2">
           <button className="rounded bg-[#B124A3] px-4 py-2 text-white" type="submit">{editingId ? "保存" : "新增"}</button>
@@ -70,12 +77,13 @@ function ParentsAdmin() {
       {message ? <div className="mt-3 rounded bg-pink-50 p-2 text-pink-700">{message}</div> : null}
       <div className="mt-6 overflow-x-auto rounded-md bg-white shadow-sm">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-50 text-left"><tr><th className="p-3">姓名</th><th className="p-3">电话</th><th className="p-3">已批准孩子数</th><th className="p-3">操作</th></tr></thead>
+          <thead className="bg-gray-50 text-left"><tr><th className="p-3">姓名</th><th className="p-3">电话</th><th className="p-3">邮箱</th><th className="p-3">已批准孩子数</th><th className="p-3">操作</th></tr></thead>
           <tbody>
             {parents.map((parent) => (
               <tr key={parent.id} className="border-t">
                 <td className="p-3">{fullName(parent)}</td>
                 <td className="p-3">{parent.phone_number}</td>
+                <td className="p-3">{parent.email || "-"}</td>
                 <td className="p-3">{parent.students?.length || 0}</td>
                 <td className="p-3">
                   <button className="mr-2 rounded border px-3 py-1 text-pink-700" onClick={() => startEdit(parent)}>编辑</button>

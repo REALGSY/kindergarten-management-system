@@ -5,6 +5,7 @@ class ChildLearningTest < ActionDispatch::IntegrationTest
   SECRET = ENV.fetch("JWT_SECRET")
 
   def setup
+    ChildTtsAudio.delete_all if defined?(ChildTtsAudio)
     ChildChatMessage.delete_all if defined?(ChildChatMessage)
     ChildChatSession.delete_all if defined?(ChildChatSession)
     EducationalVideo.delete_all if defined?(EducationalVideo)
@@ -58,7 +59,7 @@ class ChildLearningTest < ActionDispatch::IntegrationTest
     ParentStudent.create!(parent: @other_parent, student: @older_student, status: ParentStudent::APPROVED)
   end
 
-  test "admin manages educational videos and child endpoint filters published videos by age and subject" do
+  test "admin manages educational videos and child endpoint returns all published videos with subject filtering" do
     post "/admin/educational_videos",
       headers: admin_headers(@admin),
       params: video_params(title: "Counting Song", subject: "数学", status: EducationalVideo::DRAFT)
@@ -78,6 +79,11 @@ class ChildLearningTest < ActionDispatch::IntegrationTest
       headers: admin_headers(@admin),
       params: video_params(title: "Big Kids Reading", subject: "语言", min_age: 5, max_age: 6, status: EducationalVideo::PUBLISHED)
     assert_response :created
+
+    get "/child/videos", headers: child_headers(@student)
+    assert_response :success
+    videos = JSON.parse(response.body)
+    assert_equal ["Counting Song", "Big Kids Reading"].sort, videos.map { |video| video["title"] }.sort
 
     get "/child/videos", headers: child_headers(@student), params: { subject: "数学" }
     assert_response :success
@@ -202,6 +208,110 @@ class ChildLearningTest < ActionDispatch::IntegrationTest
     assert_equal ChildChatMessage::USER, session.child_chat_messages.first.role
   end
 
+  test "child tts endpoint requires child token and returns synthesized audio" do
+    fake_client = Class.new do
+      attr_reader :received_text
+
+      def synthesize(text:)
+        @received_text = text
+        {
+          provider: "tencent_cloud",
+          voice_type: 101_016,
+          codec: "mp3",
+          sample_rate: 16_000,
+          segments: [{ audio_base64: "audio-data" }]
+        }
+      end
+    end.new
+
+    post "/child/tts", params: { text: "你好" }, as: :json
+    assert_response :unauthorized
+
+    post "/child/tts", headers: parent_headers(@parent), params: { text: "你好" }, as: :json
+    assert_response :forbidden
+
+    with_tencent_tts_client(fake_client) do
+      post "/child/tts",
+        headers: child_headers(@student),
+        params: { text: "你好😊" },
+        as: :json
+      assert_response :success
+    end
+
+    body = JSON.parse(response.body)
+    assert_equal "你好😊", fake_client.received_text
+    assert_equal "tencent_cloud", body["provider"]
+    assert_equal 101_016, body["voice_type"]
+    assert_equal "mp3", body["codec"]
+    assert_equal "audio-data", body.dig("segments", 0, "audio_base64")
+  end
+
+  test "child tts endpoint persists generated audio and reuses it for the same assistant message" do
+    session = @student.child_chat_sessions.create!(title: "TTS cache test")
+    assistant_message = session.child_chat_messages.create!(
+      role: ChildChatMessage::ASSISTANT,
+      content: "cache me please"
+    )
+    fake_client = Class.new do
+      attr_reader :received_text, :calls
+
+      def synthesize(text:)
+        @calls = @calls.to_i + 1
+        @received_text = text
+        {
+          provider: "tencent_cloud",
+          voice_type: 101_016,
+          codec: "mp3",
+          sample_rate: 16_000,
+          segments: [{ audio_base64: "audio-data" }]
+        }
+      end
+    end.new
+
+    with_tencent_tts_client(fake_client) do
+      post "/child/tts",
+        headers: child_headers(@student),
+        params: { text: "ignored", message_id: assistant_message.id },
+        as: :json
+      assert_response :success
+      first_body = JSON.parse(response.body)
+      assert_equal false, first_body["cached"]
+
+      post "/child/tts",
+        headers: child_headers(@student),
+        params: { text: "ignored", message_id: assistant_message.id },
+        as: :json
+      assert_response :success
+    end
+
+    body = JSON.parse(response.body)
+    assert_equal "cache me please", fake_client.received_text
+    assert_equal 1, fake_client.calls
+    assert_equal 1, ChildTtsAudio.count
+    assert_equal true, body["cached"]
+    assert_equal "audio-data", body.dig("segments", 0, "audio_base64")
+  end
+
+  test "child tts endpoint returns safe errors without exposing provider details" do
+    fake_client = Class.new do
+      def synthesize(text:)
+        raise TencentTtsClient::ApiError, "AI 回复中包含无法朗读的内容"
+      end
+    end.new
+
+    with_tencent_tts_client(fake_client) do
+      post "/child/tts",
+        headers: child_headers(@student),
+        params: { text: "你好😊" },
+        as: :json
+      assert_response :bad_gateway
+    end
+
+    body = JSON.parse(response.body)
+    assert_equal "AI 回复中包含无法朗读的内容", body["error"]
+    refute_match(/secret|signature|authorization/i, body["error"])
+  end
+
   private
 
   def video_params(overrides = {})
@@ -249,4 +359,13 @@ class ChildLearningTest < ActionDispatch::IntegrationTest
   ensure
     DeepseekClient.define_singleton_method(:new, original_new)
   end
+
+  def with_tencent_tts_client(client)
+    original_new = TencentTtsClient.method(:new)
+    TencentTtsClient.define_singleton_method(:new) { client }
+    yield
+  ensure
+    TencentTtsClient.define_singleton_method(:new, original_new)
+  end
+
 end

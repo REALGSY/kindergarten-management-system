@@ -3,9 +3,10 @@
 ParaKindergarten is a fullstack application for managing a preschool. It includes separate admin, teacher, and parent dashboards. Admins manage global school data, teachers operate only within their assigned classroom, and parents can view approved linked children.
 
 # Getting Started
-## Tecnologies used
+## Technologies used
 <ol>
-<li>Reactjs</li>
+<li>Vue 3 + Vite</li>
+<li>Pinia + Vue Router</li>
 <li>Ruby on Rails</li>
 <li>AWS Deployment</li>
 </ol>
@@ -26,10 +27,17 @@ Clone the repository:
  ```html
  npm install
  ```
-starting react server
+starting Vite server
 ```htm
  npm start
 ```
+The frontend listens on `127.0.0.1:4000` to remain compatible with the existing FRP and deployment configuration.
+
+Optional frontend environment variables:
+
+- `VITE_API_BASE_URL`: absolute Rails API origin; leave empty for relative API paths.
+- `VITE_API_PROXY_TARGET`: Rails origin used by the Vite development proxy (defaults to `http://127.0.0.1:3000`).
+- `VITE_CHILD_DEV2_URL`: URL embedded by the administrator's Child Growth OS view (defaults to `http://localhost:8080`).
 ## Backend
 installing ruby gems
 ```html
@@ -86,10 +94,10 @@ Rails s
 - [Backend](https://github.com/Gracelaura/kindergarten-management-system-frontend)
 ## Technologies and Tools 
 - HTML - to structure our forms
-- React - for Client side rendering and routing
+- Vue 3 - for client-side rendering and routing
 - Rails - for developing backend API
 - Custom API
-- Tailwind CSS and custom css - for styling our application.
+- CSS variables and custom CSS - for the shared ParaKindergarten design system.
 - JWT for authenticating users.
 - Railway or AWS for hosting the server.
 - Netlifly for client hosting.
