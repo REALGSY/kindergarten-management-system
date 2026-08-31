@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_07_000100) do
+ActiveRecord::Schema[7.0].define(version: 2026_09_01_000000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -149,6 +149,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_07_000100) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_external_email_recipients_on_active"
     t.index ["email"], name: "index_external_email_recipients_on_email", unique: true
+  end
+
+  create_table "growth_records", force: :cascade do |t|
+    t.integer "student_id", null: false
+    t.date "recorded_on", null: false
+    t.string "author_role", null: false
+    t.bigint "author_id", null: false
+    t.text "note"
+    t.text "analysis"
+    t.string "positive_tags", default: "", null: false
+    t.string "watch_tags", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id", "recorded_on"], name: "index_growth_records_on_student_id_and_recorded_on"
+    t.index ["student_id"], name: "index_growth_records_on_student_id"
   end
 
   create_table "parent_students", force: :cascade do |t|
@@ -311,6 +326,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_07_000100) do
   add_foreign_key "classrooms", "teachers", on_delete: :nullify
   add_foreign_key "disciplines", "students"
   add_foreign_key "educational_videos", "admins", on_delete: :nullify
+  add_foreign_key "growth_records", "students"
   add_foreign_key "parent_students", "parents"
   add_foreign_key "parent_students", "students"
   add_foreign_key "parenting_advice_deliveries", "parenting_advice_schedules"
