@@ -8,6 +8,7 @@ class Student < ApplicationRecord
     has_many :disciplines, dependent: :destroy
     has_many :attendances, dependent: :destroy
     has_many :child_chat_sessions, dependent: :destroy
+    has_many :growth_records, dependent: :destroy
 
     before_validation :set_default_child_password, on: :create
 

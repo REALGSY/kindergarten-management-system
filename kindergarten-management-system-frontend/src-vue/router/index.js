@@ -20,6 +20,7 @@ import ChildChatAdminView from "../views/ChildChatAdminView.vue";
 import StudentDetailView from "../views/StudentDetailView.vue";
 import AttendanceDetailView from "../views/AttendanceDetailView.vue";
 import AdminUsersView from "../views/AdminUsersView.vue";
+import GrowthJournalView from "../views/GrowthJournalView.vue";
 
 const adminResources = {
   teachers: { title: "教师档案", endpoint: "/admin/teachers", fields: ["first_name", "last_name", "career_name", "email", "phone_number", "gender", "password"] },
@@ -86,6 +87,7 @@ const routes = [
       { path: "add_kid", component: ResourceView, props: { role: "teacher", config: { ...teacherResources.kids_list, title: "新增学生", createOnly: true } }, meta: { role: "teacher" } },
       { path: "addcase", component: ResourceView, props: { role: "teacher", config: { ...teacherResources.discipline, title: "新增纪律记录", createOnly: true } }, meta: { role: "teacher" } },
       { path: "kids_list/:id", component: StudentDetailView, meta: { role: "teacher" } },
+      { path: "kids_list/:id/growth", component: GrowthJournalView, props: { role: "teacher" }, meta: { role: "teacher" } },
       { path: "attendance/:date", component: AttendanceDetailView, meta: { role: "teacher" } },
       { path: "profile", component: ProfileView, props: { role: "teacher" }, meta: { role: "teacher" } },
     ],
@@ -99,6 +101,7 @@ const routes = [
       { path: "", component: OverviewView, props: { role: "parent" }, meta: { role: "parent", theme: "light" } },
       { path: "my_kids", component: ParentKidsView, meta: { role: "parent", theme: "light" } },
       { path: "my_kids/:id", component: ParentKidDetailView, meta: { role: "parent", theme: "light" } },
+      { path: "my_kids/:id/growth", component: GrowthJournalView, props: { role: "parent" }, meta: { role: "parent", theme: "light" } },
       { path: "chat_records", component: ParentChatView, meta: { role: "parent", theme: "light" } },
       { path: "profile", component: ProfileView, props: { role: "parent" }, meta: { role: "parent", theme: "light" } },
     ],
